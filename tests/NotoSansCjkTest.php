@@ -52,7 +52,9 @@ final class NotoSansCjkTest extends TestCase
         self::assertTrue(mkdir($directory, 0700));
         try {
             $factory = new OverlayRendererFactory();
-            $default = $factory->create($directory);
+            // Without glyph fallback the default faces lack CJK; with it, the core draws from this pack's faces too.
+            $exact = (new \Vicam\Pdf\PdfConfiguration())->withOutput(new \Vicam\Pdf\OutputDefaults(glyphFallback: \Vicam\Pdf\Core\Font\GlyphFallback::Disabled));
+            $default = $factory->create($directory, $exact);
             $cjk = $factory->create($directory, null, OverlayFonts::bundled(NotoSansCjk::fontFiles()));
             $text = '王小明 東京都 ひらがな カタカナ 김민준 서울 Łukasz Дмитрий';
 
